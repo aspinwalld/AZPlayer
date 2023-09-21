@@ -31,8 +31,14 @@ PAD_PROC = 'hd3'
 class PlaylistTable:
     def __init__(self):
         self.table = PrettyTable()
-        self.table.field_names = ["AIR TIME", "CUT ID",
-                                  "CATEGORY", "TITLE", "ARTIST", "LENGTH", "INTRO"]
+        self.table.field_names = ["AIR TIME",
+                                  "CUT ID",
+                                  "CATEGORY",
+                                  "        TITLE         ",
+                                  "        ARTIST        ",
+                                  "LENGTH",
+                                  "INTRO"
+                                  ]
         self.color = {} 
         self._init_colors()
 
