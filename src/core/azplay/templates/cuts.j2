@@ -1,0 +1,78 @@
+{% extends "index.j2" %}
+
+{% block child_page %}
+<div class="row">
+    <div class="col text-center">
+        <h3>Categories</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div id="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="d-table" class="table table-striped" style="display:none">
+                <thead>
+                    <tr>
+                        <th scope="col">Cut ID</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Artist</th>
+                        <th scope="col">Album</th>
+                        <th scope="col">TopPlay</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cut in cuts %}
+                    <tr>
+                        <td>{{ cut.cut }}</td>
+                        <td>{{ cut.category }}</td>
+                        <td>{{ cut.duration }}</td>
+                        <td>{{ cut.title }}</td>
+                        <td>{{ cut.artist }}</td>
+                        <td>{{ cut.album }}</td>
+                        <td>
+                            {% if cut.topplay == 1 %}
+                            AutoIntro
+                            {% elif cut.topplay == 2 %}
+                            AutoPost
+                            {% else %}
+                            Off
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('update_cut', cut_id=cut.id) }}" class="btn btn-sm btn-secondary"
+                                role="button">Edit</a>
+                            <a href="{{ url_for('delete_cut', cut_id=cut.id) }}" class="btn btn-sm btn-danger"
+                                role="button">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div>
+            <a href="{{url_for('new_cut')}}" class="btn btn-primary ripple-surface mb-4" role="button">Add
+                Cut</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#d-table').DataTable();
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('d-table').style.display = '';
+    });
+</script>
+{% endblock %}

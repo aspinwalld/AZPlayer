@@ -1,0 +1,62 @@
+{% extends "index.j2" %}
+
+{% block child_page %}
+<div class="row">
+    <div class="col text-center">
+        <h3>Categories</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div id="loading">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table id="d-table" class="table table-striped" style="display:none">
+                <thead>
+                    <tr>
+                        <th width="25%" scope="col">ID</th>
+                        <th width="25%" scope="col">Name</th>
+                        <th width="25%" scope="col">Color</th>
+                        <th width="25%" scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                    <tr>
+                        <td>{{ category.id }}</td>
+                        <td>{{ category.name }}</td>
+                        <td><span class="badge" style="background: {{ category.color }};">{{ category.color }}</span></td>
+                        <td>
+                            <a href="{{ url_for('update_category', category_id=category.id) }}"
+                                class="btn btn-sm btn-secondary" role="button">Edit</a>
+                            <a href="{{ url_for('delete_category', category_id=category.id) }}"
+                                class="btn btn-sm btn-danger" role="button">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <div>
+            <a href="{{url_for('new_category')}}"
+                class="btn btn-primary ripple-surface mb-4" role="button">Add Category</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#d-table').DataTable();
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('d-table').style.display = '';
+    });
+</script>
+{% endblock %}

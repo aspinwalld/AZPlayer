@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mdb.dark.min.css') }}" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='src/datatables/datatables.min.css') }}"/>
+
+  <title>AZPlay</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+        {# <img src="{{ url_for('static', filename='img/logo.png') }}" alt="" height="30px" width="inherit"
+          class="d-inline-block align-text-bottom"> #}
+        AZPlay
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+        {% if current_user.is_authenticated %}
+          {% if current_user.role >= 1 %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('cuts') }}">Cuts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('categories') }}">Categories</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('users') }}">Users</a>
+          </li>
+          {% endif %}
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('logout')}}">Log Out</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('login')}}">Login</a>
+          </li>
+          {% endif %}
+        {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid">
+    <div id="flash" class="p-3">
+      <div class="row">
+        <div class="col">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+          {% endfor %}
+          {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+    </div>
+    <div class="p-3">
+      {% block child_page %}{% endblock %}
+    </div>
+  </div>
+  
+  <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='js/popper.min.js') }}" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='js/mdb.min.js') }}" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='src/datatables/datatables.min.js') }}"></script>
+  {%block page_scripts %}{% endblock %}
+</body>
+
+</html>

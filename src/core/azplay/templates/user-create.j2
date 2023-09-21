@@ -1,0 +1,150 @@
+{% extends "index.j2" %}
+
+{% block child_page %}
+<div class="container">
+    <div class="card text-center">
+        <div class="card-header">
+            <h3 class="p-3">Create User</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <form method="POST" , action="">
+                        {{ form.hidden_tag() }}
+                        <fieldset class="form-group">
+                            <div class="form-outline mb-4">
+                                {% if form.name.errors %}
+                                {{ form.name(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.name.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form.name(class="form-control") }}
+                                {{ form.name.label(class="form-label", style="margin-left: 0px") }}
+                                <div class="form-notch">
+                                    <div class="form-notch-leading" style="width: 9px"></div>
+                                    <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                    <div class="form-notch-trailing"></div>
+                                </div>
+                                <div class="form-notch">
+                                    <div class="form-notch-leading" style="width: 9px;"></div>
+                                    <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                    <div class="form-notch-trailing"></div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-outline mb-4">
+                                {% if form.email.errors %}
+                                {{ form.email(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form.email(class="form-control") }}
+                                {{ form.email.label(class="form-label", style="margin-left: 0px") }}
+                                <div class="form-notch">
+                                    <div class="form-notch-leading" style="width: 9px"></div>
+                                    <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                    <div class="form-notch-trailing"></div>
+                                </div>
+                                <div class="form-notch">
+                                    <div class="form-notch-leading" style="width: 9px;"></div>
+                                    <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                    <div class="form-notch-trailing"></div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-outline mb-4">
+                                {% if form.password.errors %}
+                                {{ form.password(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.password.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form.password(class="form-control") }}
+                                {{ form.password.label(class="form-label", style="margin-left: 0px") }}
+                                <div class="form-notch">
+                                    <div class="form-notch-leading" style="width: 9px"></div>
+                                    <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                    <div class="form-notch-trailing"></div>
+                                </div>
+                                <div class="form-notch">
+                                    <div class="form-notch-leading" style="width: 9px;"></div>
+                                    <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                    <div class="form-notch-trailing"></div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-outline mb-4">
+                                {% if form.confirm_password.errors %}
+                                {{ form.confirm_password(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.confirm_password.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form.confirm_password(class="form-control") }}
+                                {{ form.confirm_password.label(class="form-label", style="margin-left: 0px") }}
+                                <div class="form-notch">
+                                    <div class="form-notch-leading" style="width: 9px"></div>
+                                    <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                    <div class="form-notch-trailing"></div>
+                                </div>
+                                <div class="form-notch">
+                                    <div class="form-notch-leading" style="width: 9px;"></div>
+                                    <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                    <div class="form-notch-trailing"></div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-outline mb-4">
+                                {% if form.role.errors %}
+                                {{ form.role(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.role.errors %}
+                                    <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                {{ form.role(class="form-control") }}
+                                {{ form.role.label(class="form-label", style="margin-left: 0px") }}
+                                <div class="form-notch">
+                                    <div class="form-notch-leading" style="width: 9px"></div>
+                                    <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                    <div class="form-notch-trailing"></div>
+                                </div>
+                                <div class="form-notch">
+                                    <div class="form-notch-leading" style="width: 9px;"></div>
+                                    <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                    <div class="form-notch-trailing"></div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group mb-2">
+                                {{ form.submit(class="btn btn-primary btn-block ripple-surface") }}
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+        {# <div class="card-footer text-muted">
+            <small class="text-muted">
+                Already have an account? <a class="ml-2" href="{{ url_for('login') }}">Log In</a>
+            </small>
+        </div> #}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

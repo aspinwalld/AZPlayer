@@ -1,0 +1,2 @@
+# azplay-core
+AZPlay Core
