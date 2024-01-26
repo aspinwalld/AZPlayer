@@ -1,4 +1,5 @@
 # wav store
+*.wav
 /src/audio/*
 
 # Byte-compiled / optimized / DLL files

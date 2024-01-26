@@ -42,8 +42,31 @@
                             </div>
                             <div class="row">
                                 <div class="col">
-                                    <label class="form-label" for="audioFile"></label>
-                                    <input type="file" class="form-control" id="audioFile" />
+                                    <div class="form-outline mb-4">
+                                        {% if form.audio.errors %}
+                                            {{ form.audio(class="form-control is-invalid") }}
+                                            <div class="invalid-feedback">
+                                                {% for error in form.audio.errors %}
+                                                <span>{{ error }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {{ form.audio(class="form-control") }}
+                                            {{ form.audio.label(class="form-label", style="margin-left: 0px") }}
+                                            <div class="form-notch">
+                                                <div class="form-notch-leading" style="width: 9px"></div>
+                                                <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                                <div class="form-notch-trailing"></div>
+                                            </div>
+                                            <div class="form-notch">
+                                                <div class="form-notch-leading" style="width: 9px;"></div>
+                                                <div class="form-notch-middle" style="width: 88.8px;"></div>
+                                                <div class="form-notch-trailing"></div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    {# <label class="form-label" for="audioFile"></label>
+                                    <input type="file" class="form-control" id="audioFile" /> #}
                                     {# <div class="form-outline mb-4">
                                         {% if form.audio.errors %}
                                         {{ form.audio(class="form-control is-invalid") }}

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import sys
 from pydub import AudioSegment
 
 
@@ -46,17 +45,10 @@ class Transcode:
         if self.proxy_cuts_enabled:
             proxy_out_file = f'{self.audio_directory}/{cut_id}.{self.proxy_format}'
             proxy_ok = self.create_proxy(segment, proxy_out_file)
-        else: # If no proxy, just set ok as True to avoid downstream trouble logic
+        else:  # If no proxy, just set ok as True to avoid downstream trouble logic
             proxy_ok = True
 
         wav_out_file = f'{self.audio_directory}/{cut_id}.{self.audio_format}'
         wav_ok = self.create_wav(segment, wav_out_file)
 
         return (wav_ok, proxy_ok)
-
-
-if __name__ == '__main__':
-    in_file = sys.argv[1].strip()
-
-    transcoder = Transcode(audio_directory='/home/daspinwall/azpsnd')
-    transcoder.import_cut(in_file, 'c5942fe2-6799-4633-9383-831b1b5004d2')

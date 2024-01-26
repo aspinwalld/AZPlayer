@@ -3,7 +3,7 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange
-from azplay.models import UsersModel, Categories, Cuts
+from azplay.models import Users, Categories, Cuts
 
 
 # Registration form used for new user self-signup.
@@ -18,13 +18,13 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Create Account')
 
     def validate_username(self, username):
-        user = UsersModel.query.filter_by(username=username.data).first()
+        user = Users.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError(
                 'Username unavailable. Please choose a different one or log in.')
 
     def validate_email(self, email):
-        user = UsersModel.query.filter_by(email=email.data).first()
+        user = Users.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError(
                 'Email unavailable. Please choose a different one or log in.')
@@ -67,13 +67,13 @@ class NewUserForm(FlaskForm):
     submit = SubmitField('Create User')
 
     def validate_username(self, username):
-        user = UsersModel.query.filter_by(username=username.data).first()
+        user = Users.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError(
                 'Username unavailable. Please choose a different one or log in.')
 
     def validate_email(self, email):
-        user = UsersModel.query.filter_by(email=email.data).first()
+        user = Users.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError(
                 'Email unavailable. Please choose a different one or log in.')
@@ -124,5 +124,5 @@ class NewCutForm(FlaskForm):
 
 class UploadCutAudioForm(FlaskForm):
     cut = IntegerField('Cut ID', validators=[DataRequired(), NumberRange(min=0, max=999_999)])
-    audio = FileField('WAV File', validators=[DataRequired()])
+    audio = FileField('WAV File')
     submit = SubmitField('Upload')

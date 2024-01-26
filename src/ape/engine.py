@@ -10,76 +10,10 @@ from rws import WSClient
 from logformatter import CustomFormatter
 import asyncio
 
-DEBUG = True
+DEBUG = False
 SERVICE_ID = 'azplay-ape'
 WS_STARTUP_WAIT_MS = 2000
 MIN_WS_MSG_INTERVAL_MS = 100
-
-
-CUT_DATA = [
-    {
-        "playlist": {
-            "track_id": "7f4ec6eb-cdec-4b00-a2d0-570e03eb7d35",
-            "index": 0,
-            "eod_code": 2
-        },
-        "category": "MUSIC",
-        "cut": 100000,
-        "duration": 60000,
-        "meta": {
-            "album": "",
-            "artist": "Cantina Band",
-            "title": "60 Second Song"
-        },
-        "timers": {
-            "_track_begin": 0,
-            "_track_end": 60000,
-            "intro_begin": 0,
-            "intro_end": 0,
-            "segue_begin": 52000,
-            "segue_end": 60000
-        },
-        "topplay": False,
-        "_links": {
-            "audio": "./audio/CantinaBand60.wav",
-            "albumart": None
-        },
-        "_ui": {
-            "text_color": "cyan"
-        }
-    },
-    {
-        "playlist": {
-            "track_id": "7f4ec6eb-cdec-4b00-a2d0-570e03eb7d36",
-            "index": 0,
-            "eod_code": 2
-        },
-        "category": "MUSIC",
-        "cut": 100000,
-        "duration": 60000,
-        "meta": {
-            "album": "",
-            "artist": "Cantina Band",
-            "title": "60 Second Song"
-        },
-        "timers": {
-            "_track_begin": 0,
-            "_track_end": 60000,
-            "intro_begin": 0,
-            "intro_end": 0,
-            "segue_begin": 52000,
-            "segue_end": 60000
-        },
-        "topplay": False,
-        "_links": {
-            "audio": "./audio/CantinaBand60.wav",
-            "albumart": None
-        },
-        "_ui": {
-            "text_color": "cyan"
-        }
-    }
-]
 
 
 log = logging.getLogger(__name__)
@@ -97,8 +31,10 @@ log.addHandler(stdout_log)
 class APE:
     '''AZPlay APE (Audio Playout Engine)'''
 
-    def __init__(self):
+    def __init__(self, log, ws_host: str = '127.0.0.1', ws_port: int = 3420):
         # Instantiate PyAudio and initialize PortAudio system resources
+        self.log = log
+
         self.p = pyaudio.PyAudio()
         log.debug(f'Create pyAudio {self.p}')
         self.devices = self.get_devices()
@@ -106,8 +42,8 @@ class APE:
             f'Discovered {len(self.devices)} PortAudio devices: {self.devices}')
         self.playing = {}
 
-        #self.ws = WSClient(log, url='ws://127.0.0.1:8080')
-        self.ws = WSClient(log, host='127.0.0.1', port=8080)
+        # self.ws = WSClient(log, url='ws://127.0.0.1:8080')
+        self.ws = WSClient(log, host=ws_host, port=ws_port)
         log.info('Starting websocket client...')
         # self.start_ws_client()
         self.ws.connect()
@@ -136,16 +72,19 @@ class APE:
 
         return devices
 
-    def emit_message(self, msg_type: str, msg_data: object) -> None:
+    def emit_message(self, event: str, msg_data: object) -> None:
         '''Emit message via [tbd_messaging_service]'''
         msg_struct = {
             # milliseconds since unix epoch
             'timestamp': round(time.time() * 1000),
             'origin': SERVICE_ID,
-            'message': msg_type,
+            'event': event,
             'data': msg_data
         }
-        self.ws.send(msg_struct)
+        try:
+            self.ws.send(msg_struct)
+        except Exception as e:
+            log.error(e)
 
     def emit_track_start(self, cut_data: object, output_device: int) -> None:
         '''Emit track start message'''
@@ -172,6 +111,18 @@ class APE:
             'track_elapsed': round(time_info['input_buffer_adc_time'] * 1000)
         }
         self.emit_message('stream.update', msg)
+
+    def emit_track_end(self, cut_data: object, output_device: int) -> None:
+        '''Emit track end message'''
+        msg = {
+            'playlist_track_id': cut_data['playlist']['track_id'],
+            'cut_info': cut_data,
+            'device': {
+                'index': output_device,
+                'name': None if output_device == None else self.devices[output_device]
+            }
+        }
+        self.emit_message('stream.end', msg)
 
     def play(self, cut: str, output_device: int | None = None) -> int:
         '''Spin up worker thread to handle single audio essence playout'''
@@ -212,16 +163,17 @@ class APE:
                                  channels=wf.getnchannels(),
                                  rate=wf.getframerate(),
                                  output_device_index=output_device,
-                                 output=True,
+                                 output=True,  # Output Enable handled in mixer module
                                  stream_callback=callback)
 
-            #self.playing[cut_data['cut']] = stream
+            # self.playing[cut_data['cut']] = stream
 
             # Wait for stream to finish
             while stream.is_active():
                 time.sleep(0.1)
 
             stream.close()
+            self.emit_track_end(cut_data, output_device)
             try:
                 self.playing.pop(track_id)
             except KeyError as e:
@@ -229,13 +181,3 @@ class APE:
                     f'Error removing track_id {track_id} from playing struct.')
                 log.debug(e)
             return 0
-
-
-if __name__ == '__main__':
-    ape = APE()
-    ape.play(cut=CUT_DATA[0])
-    time.sleep(52000/1000)
-    ape.play(cut=CUT_DATA[1])
-    time.sleep(72)
-
-    ape.p.terminate()

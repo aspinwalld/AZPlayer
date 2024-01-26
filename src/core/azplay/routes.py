@@ -1,6 +1,6 @@
 from azplay import app, db, bcrypt
 from azplay.forms import *
-from azplay.models import UsersModel, Categories, Cuts
+from azplay.models import Users, Categories, Cuts
 from flask import render_template, url_for, flash, redirect, request, abort, send_file
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_user import roles_required
@@ -58,7 +58,7 @@ def login():
         return redirect(url_for('dashboard'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = UsersModel.query.filter_by(email=form.email.data).first()
+        user = Users.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
@@ -83,7 +83,7 @@ def register():
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(
             form.password.data).decode('utf-8')
-        user = UsersModel(name=form.name.data, email=form.email.data,
+        user = Users(name=form.name.data, email=form.email.data,
                           password=hashed_password, role=0, is_locked=False)
         db.session.add(user)
         db.session.commit()
@@ -96,9 +96,9 @@ def register():
 @login_required
 def users():
     if not auth(1):
-        noauth()
+        return noauth()
 
-    users = UsersModel.query.all()
+    users = Users.query.all()
     print(users)
     return render_template('users.j2', users=users)
 
@@ -107,11 +107,11 @@ def users():
 @login_required
 def new_user():
     if not auth(2):
-        noauth()
+        return noauth()
 
     form = NewUserForm()
     if form.validate_on_submit():
-        user = UsersModel(
+        user = Users(
             name=form.name.data,
             email=form.email.data,
             password=form.password.data,
@@ -127,9 +127,9 @@ def new_user():
 @login_required
 def update_user(user_id):
     if not auth(2):
-        noauth()
+        return noauth()
 
-    user = UsersModel.query.get_or_404(user_id)
+    user = Users.query.get_or_404(user_id)
     form = UpdateUserForm()
 
     if form.validate_on_submit():
@@ -158,9 +158,9 @@ def update_user(user_id):
 @login_required
 def delete_user(user_id):
     if not auth(2):
-        noauth()
+        return noauth()
 
-    user = UsersModel.query.get_or_404(user_id)
+    user = Users.query.get_or_404(user_id)
 
     if current_user == user:
         flash('Please don\'t delete yourself...', 'danger')
@@ -175,7 +175,7 @@ def delete_user(user_id):
 @login_required
 def categories():
     if not auth(1):
-        noauth()
+        return noauth()
 
     categories = Categories.query.all()
     return render_template('categories.j2', categories=categories)
@@ -185,7 +185,7 @@ def categories():
 @login_required
 def new_category():
     if not auth(1):
-        noauth()
+        return noauth()
 
     form = NewCategoryForm()
     if form.validate_on_submit():
@@ -203,7 +203,7 @@ def new_category():
 @login_required
 def update_category(category_id):
     if not auth(1):
-        noauth()
+        return noauth()
 
     category = Categories.query.get_or_404(category_id)
     form = UpdateCategoryForm()
@@ -227,7 +227,7 @@ def update_category(category_id):
 @login_required
 def delete_category(category_id):
     if not auth(2):
-        noauth()
+        return noauth()
 
     category = Categories.query.get_or_404(category_id)
 
@@ -244,7 +244,7 @@ def delete_category(category_id):
 @login_required
 def cuts():
     if not auth(1):
-        noauth()
+        return noauth()
 
     cuts = Cuts.query.all()
     return render_template('cuts.j2', cuts=cuts)
@@ -254,29 +254,38 @@ def cuts():
 @login_required
 def upload_cut():
     if not auth(1):
-        noauth()
+        return noauth()
 
     form = UploadCutAudioForm()
 
-    if form.validate_on_submit():
+    if request.method == 'POST':
 
-        if 'file' not in request.files:
+        if form.validate_on_submit():
+            print('>>> Form validated')
+            print(request.files)
+
+            if 'file' not in request.files:
+                flash('Error uploading audio file.', 'danger')
+                return redirect(request.url)
+            
+            file = request.files['file']
+
+            print(f'>>> File={file}')
+
+            if file.filename == '':
+                # User did not select a file for upload
+                flash('Please select an audio file to upload', 'warning')
+                return redirect(request.url)
+            
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                transcoder.import_cut(filename, 6969)
+                # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                return redirect(url_for('cuts'))
+            else:
+                print('>>> File now allowed probably')
+        else:
             flash('Error uploading audio file.', 'danger')
-            return redirect(request.url)
-        
-        file = request.files['file']
-
-        if file.filename == '':
-            # User did not select a file for upload
-            flash('Please select an audio file to upload', 'warning')
-            return redirect(request.url)
-        
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            transcoder.import_cut(filename, 6969)
-            # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('cuts'))
-        
     return render_template('cut-upload.j2', form=form)
 
 
@@ -284,7 +293,7 @@ def upload_cut():
 @login_required
 def new_cut():
     if not auth(1):
-        noauth()
+        return noauth()
 
     categories = Categories.query.all()
     choices = [(category.id, category.name) for category in categories]
@@ -319,7 +328,7 @@ def new_cut():
 @login_required
 def update_cut(cut_id):
     if not auth(1):
-        noauth()
+        return noauth()
 
     cut = Cuts.query.get_or_404(cut_id)
     form = UpdateCategoryForm()
@@ -371,7 +380,7 @@ def update_cut(cut_id):
 @login_required
 def delete_cut(cut_id):
     if not auth(2):
-        noauth()
+        return noauth()
 
     cut = Cuts.query.get_or_404(cut_id)
 

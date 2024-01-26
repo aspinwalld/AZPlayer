@@ -4,7 +4,7 @@ import asyncio
 from websockets.server import serve
 
 WS_HOST = '127.0.0.1'
-WS_PORT = 8080
+WS_PORT = 3420
 
 
 async def echo(websocket):

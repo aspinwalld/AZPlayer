@@ -1,6 +1,7 @@
 import websocket
 import threading
 import json
+import time
 
 DEBUG = False
 
@@ -51,9 +52,12 @@ class WSClient:
         self.connected = True
         self.log.debug(f'WebSocket opened: {ws}')
 
-    def on_close(self, ws):
+    def on_close(self, ws, *args, **kwargs):
         self.connected = False
         self.log.debug(f'WebSocket closed: {ws}')
+        
+        time.sleep(1)
+        self.connect()
 
     def on_message(self, ws, msg):
         self.log.debug(f'Received WS Msg: [{ws}] {msg}')

@@ -1,0 +1,69 @@
+{
+  "id": "cuts.json",
+  "name": "94.12 The Stall",
+  "created_at": "2023-03-21T23:01:40.821790",
+  "cuts": {
+    "100001": {
+      "playlist": {
+        "track_id": "7f4ec6eb-cdec-4b00-a2d0-570e03eb7d35",
+        "index": 0,
+        "eod_code": 2
+      },
+      "category": "MUSIC",
+      "cut": 100001,
+      "duration": 290701,
+      "meta": {
+        "album": "",
+        "artist": "Bishop Bullwinkle",
+        "title": "Hell To Da Naw"
+      },
+      "timers": {
+        "_track_begin": 0,
+        "_track_end": 290701,
+        "intro_begin": 0,
+        "intro_end": 9849,
+        "segue_begin": 286000,
+        "segue_end": 290701
+      },
+      "topplay": false,
+      "_links": {
+        "audio": "./data/100001.wav",
+        "albumart": null
+      },
+      "_ui": {
+        "text_color": "cyan"
+      }
+    },
+    "100002": {
+      "playlist": {
+        "track_id": "7f4ec6eb-cdec-4b00-a2d0-570e03eb7d37",
+        "index": 1,
+        "eod_code": 2
+      },
+      "category": "MUSIC",
+      "cut": 100002,
+      "duration": 59730,
+      "meta": {
+        "album": "",
+        "artist": "Cantina Band",
+        "title": "60 Second Song 2"
+      },
+      "timers": {
+        "_track_begin": 0,
+        "_track_end": 59730,
+        "intro_begin": 0,
+        "intro_end": 0,
+        "segue_begin": 59197,
+        "segue_end": 59730
+      },
+      "topplay": false,
+      "_links": {
+        "audio": "./data/CantinaBand60.wav",
+        "albumart": null
+      },
+      "_ui": {
+        "text_color": "cyan"
+      }
+    }
+  }
+}
